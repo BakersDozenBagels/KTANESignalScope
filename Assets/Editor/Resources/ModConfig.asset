@@ -11,14 +11,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 615501dbe4f3fe94fbf4b564abb10237, type: 3}
   m_Name: ModConfig
   m_EditorClassIdentifier: 
-  id: designerSimpletons
-  title: Designer Simpletons
+  id: signalScope
+  title: Signal Scope
   author: BakersDozenBagels
-  description: 'Ever get tired of your plain old Simpletons? Then this is the mod
-    for you! With ${1} varieties to collect, you''ll never run out of style.
+  description: 'Listen for sounds from across the universe.
 
 
-    Mod id: designerSimpleton'
-  version: 0.1
+    Mod id: signalScope'
+  version: 0.2
   outputFolder: build
-  previewImage: {fileID: 0}
+  previewImage: {fileID: 2800000, guid: 36929a0f164828840a2e0a724316dbc1, type: 3}
