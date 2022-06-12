@@ -18,6 +18,6 @@ MonoBehaviour:
 
 
     Mod id: signalScope'
-  version: 0.2
+  version: 1.0
   outputFolder: build
   previewImage: {fileID: 2800000, guid: 36929a0f164828840a2e0a724316dbc1, type: 3}

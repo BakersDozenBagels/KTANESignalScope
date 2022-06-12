@@ -14,7 +14,7 @@ public class ViewCone : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-        if(other != null && other.tag == Tag)
+        if(other != null && other.tag == Tag && other.GetComponent<Planet>() != null)
             OnPlanetCollision(other.GetComponent<Planet>().Instrument, other.GetComponentInParent<KMBombModule>());
     }
 
