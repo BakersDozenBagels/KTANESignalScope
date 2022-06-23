@@ -54,6 +54,14 @@ public class SignalScope : MonoBehaviour
 
     private void MuteAll(bool set)
     {
+        if(TwitchPlaysActive && !set)
+        {
+            Collider c;
+            int l = GetComponentInChildren<ViewCone>().gameObject.layer;
+            foreach(Planet p in GetComponentsInChildren<Planet>())
+                if((c = p.GetComponent<Collider>()) != null)
+                    Physics.IgnoreLayerCollision(l, c.gameObject.layer, false);
+        }
         foreach(CustomAudio a in GetComponentsInChildren<CustomAudio>())
             a.Mute = set;
     }
@@ -165,7 +173,7 @@ public class SignalScope : MonoBehaviour
     }
 
 #pragma warning disable 414
-    private string TwitchHelpMessage = @"Use ""!{0} follow <instrument> <time>"" to rotate the scope to follow that instrument for that amount of time in seconds. Use ""!{0} follow sun <time>"" to follow the sun for that amount of time. Use ""!{0} point <degrees>"" to point the scope in that direction. Use ""!{0} submit <time>"" to submit when the seconds digits of the timer match that time. Use ""!{0} mute"" to stop sound from the module until your next command.";
+    private string TwitchHelpMessage = @"Use ""!{0} follow <instrument> <time>"" to rotate the scope to follow that instrument for that amount of time in seconds. Use ""!{0} follow sun <time>"" to follow the sun for that amount of time. Use ""!{0} point <degrees>"" to point the scope in that direction. Use ""!{0} submit <time>"" to submit when the seconds digits of the timer match that time.";
 #pragma warning restore 414
 
     private bool ZenModeActive;
@@ -233,8 +241,9 @@ public class SignalScope : MonoBehaviour
                 {
                     if(heldButton != null && heldButton.OnInteractEnded != null)
                         heldButton.OnInteractEnded();
+                    MuteAll(true);
 
-                    yield return "cancelled";
+                    yield return "cancelled Aborted following the " + parts[1] + " due to a request to cancel.";
                     yield break;
                 }
 
@@ -267,6 +276,8 @@ public class SignalScope : MonoBehaviour
 
             if(heldButton != null && heldButton.OnInteractEnded != null)
                 heldButton.OnInteractEnded();
+            MuteAll(true);
+            yield break;
         }
 
         if(parts[0] == "point")
@@ -299,6 +310,8 @@ public class SignalScope : MonoBehaviour
             yield return new WaitUntil(() => ((GetComponentInChildren<ViewCone>().transform.parent.localEulerAngles.y - theta) % 360f + 360f) % 360f <= 15f || ((GetComponentInChildren<ViewCone>().transform.parent.localEulerAngles.y + theta) % 360f - 360f) % 360f >= 345f);
 
             button.OnInteractEnded();
+            MuteAll(true);
+            yield break;
         }
 
         if(parts[0] == "submit")
@@ -353,20 +366,28 @@ public class SignalScope : MonoBehaviour
             {
                 yield return true;
                 if(TwitchShouldCancelCommand)
-                    yield return "cancelled";
+                {
+                    MuteAll(true);
+                    yield return "cancelled Aborted pressing the submit button due to a request to cancel.";
+                    yield break;
+                }
             }
 
             GetComponent<KMSelectable>().Children[1].OnInteract();
 
             if(targetTime - bombTime > 10f)
                 yield return "end waiting music";
+            MuteAll(true);
+            yield break;
         }
 
-        if(parts.Length == 1 && parts[0] == "mute")
-        {
-            yield return null;
-            MuteAll(true);
-        }
+        //if(parts.Length == 1 && parts[0] == "mute")
+        //{
+        //    yield return null;
+        //    yield return "sendtochat Module muted until further interaction.";
+        //    MuteAll(true);
+        //    yield break;
+        //}
     }
 
     IEnumerator TwitchHandleForcedSolve()
